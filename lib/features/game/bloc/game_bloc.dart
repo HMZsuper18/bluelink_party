@@ -97,9 +97,10 @@ class GameBloc extends Bloc<GameEvent, GameState> {
           case GameCommand.resume:
             add(const ResumeMatch());
           case GameCommand.restart:
-            add(const RestartMatch());
           case GameCommand.quit:
-            add(const ReturnToLobby());
+            // Restart / quit are host-only after everyone is ready; ignore
+            // remote requests so a client cannot force them.
+            break;
         }
       case RemoteSnapshotEvent e:
         add(RemoteStateApplied(e.snapshot));
@@ -623,11 +624,9 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   void _onRestartMatch(RestartMatch event, Emitter<GameState> emit) {
+    // Restart is host-only and only after every seat has readied while paused.
+    if (!_isAuthoritative) return;
     if (state.isPaused && !state.allPlayersReady) return;
-    if (!_isAuthoritative) {
-      _sync.sendCommand(GameCommand.restart);
-      return;
-    }
     _stopMatchTimers();
     _resetLocalInput();
     final config = _activeConfig;
@@ -765,10 +764,28 @@ class GameBloc extends Bloc<GameEvent, GameState> {
   }
 
   void _onReturnToLobby(ReturnToLobby event, Emitter<GameState> emit) {
-    if (state.isPaused && !state.allPlayersReady) return;
-    if (!_isAuthoritative) {
-      _sync.sendCommand(GameCommand.quit);
-      // Fall through and leave locally; the host mirrors this for everyone else.
+    // From a pause menu, quit is host-only and only after everyone is ready.
+    // Clients leave when they receive the host's lobby snapshot.
+    if (state.isPaused) {
+      if (!_isAuthoritative || !state.allPlayersReady) return;
+    } else if (!_isAuthoritative) {
+      // Match-result (or other) leave: clients may still exit locally.
+      _stopMatchTimers();
+      _resetLocalInput();
+      emit(state.copyWith(
+        phase: GamePhase.lobby,
+        clearConfig: true,
+        clearOutcome: true,
+        remainingSeconds: 0,
+        elapsedMs: 0,
+        redScore: 0,
+        blueScore: 0,
+        isPaused: false,
+        readyPlayerIds: const <String>{},
+        players: const <MatchPlayer>[],
+        projectiles: const <MatchProjectile>[],
+      ));
+      return;
     }
     _stopMatchTimers();
     _resetLocalInput();

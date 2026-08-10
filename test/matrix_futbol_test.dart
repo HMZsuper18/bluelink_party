@@ -37,6 +37,11 @@ class _Bus implements MatrixSyncAdapter {
   }
 
   @override
+  void sendReady({required int deviceIndex, required bool ready}) {
+    host?.setReady(deviceIndex, ready: ready);
+  }
+
+  @override
   void dispose() {}
 }
 
@@ -470,6 +475,16 @@ void main() {
       expect(host.matchClock, clockBefore,
           reason: 'the paused match clock must not advance');
 
+      host.requestReady(true);
+      client.requestReady(true);
+      for (var i = 0; i < 5; i++) {
+        host.step(1 / 60);
+        client.step(1 / 60);
+      }
+      expect(host.allPlayersReady, isTrue);
+      expect(client.allPlayersReady, isTrue,
+          reason: 'ready seats must ride the paused snapshot stream');
+
       host.requestPause(false);
       expect(host.isPaused, isFalse);
       for (var i = 0; i < 5; i++) {
@@ -479,6 +494,92 @@ void main() {
       expect(client.isPaused, isFalse,
           reason: 'the resume phase must reach clients');
       expect(host.matchClock, greaterThan(clockBefore));
+    });
+
+    test('resume stays locked until every roster seat is ready', () {
+      final bus = _Bus();
+      final host = _host(adapter: bus);
+      final client = _client(adapter: bus);
+      bus
+        ..host = host
+        ..client = client;
+
+      host.requestPause(true);
+      expect(host.isPaused, isTrue);
+
+      host.requestPause(false);
+      expect(host.isPaused, isTrue,
+          reason: 'resume must not unlock before everyone is ready');
+
+      host.requestReady(true);
+      expect(host.allPlayersReady, isFalse);
+      host.requestPause(false);
+      expect(host.isPaused, isTrue);
+
+      client.requestReady(true);
+      expect(host.allPlayersReady, isTrue);
+      host.requestPause(false);
+      expect(host.isPaused, isFalse);
+      expect(host.readyDeviceIndexes, isEmpty);
+    });
+
+    test('host restart re-enters countdown after everyone is ready', () {
+      final bus = _Bus();
+      final host = _host(adapter: bus);
+      final client = _client(adapter: bus);
+      bus
+        ..host = host
+        ..client = client;
+
+      host.start();
+      for (var i = 0; i < 60; i++) {
+        host.step(1 / 60);
+        client.step(1 / 60);
+      }
+      expect(host.phase, FutbolMatchPhase.playing);
+
+      host.requestPause(true);
+      host.restart();
+      expect(host.isPaused, isTrue,
+          reason: 'restart requires everyone ready');
+
+      host.requestReady(true);
+      client.requestReady(true);
+      host.restart();
+      expect(host.isPaused, isFalse);
+      expect(host.phase, FutbolMatchPhase.countdown);
+      expect(host.redScore, 0);
+      expect(host.blueScore, 0);
+      for (var i = 0; i < 5; i++) {
+        host.step(1 / 60);
+        client.step(1 / 60);
+      }
+      expect(client.phase, FutbolMatchPhase.countdown);
+      expect(client.redScore, 0);
+    });
+
+    test('host quit signals every device after everyone is ready', () {
+      final bus = _Bus();
+      final host = _host(adapter: bus);
+      final client = _client(adapter: bus);
+      bus
+        ..host = host
+        ..client = client;
+
+      host.requestPause(true);
+      host.quit();
+      expect(host.quitRequested, isFalse,
+          reason: 'quit requires everyone ready');
+
+      host.requestReady(true);
+      client.requestReady(true);
+      host.quit();
+      expect(host.quitRequested, isTrue);
+      for (var i = 0; i < 5; i++) {
+        host.step(1 / 60);
+        client.step(1 / 60);
+      }
+      expect(client.quitRequested, isTrue);
     });
 
     test('a client requestPause forwards to the host via the bus', () {
@@ -495,6 +596,8 @@ void main() {
       expect(client.isPaused, isTrue,
           reason: 'the in-memory bus delivers the paused phase synchronously');
 
+      host.requestReady(true);
+      client.requestReady(true);
       client.requestPause(false);
       expect(host.isPaused, isFalse);
       expect(client.isPaused, isFalse);

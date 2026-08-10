@@ -60,6 +60,11 @@ class FutbolMemoryBus implements MatrixSyncAdapter {
   }
 
   @override
+  void sendReady({required int deviceIndex, required bool ready}) {
+    _host?.setReady(deviceIndex, ready: ready);
+  }
+
+  @override
   void dispose() {}
 }
 

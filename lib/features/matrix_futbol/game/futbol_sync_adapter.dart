@@ -16,6 +16,7 @@ class FutbolHostTransport implements MatrixSyncAdapter {
   }) : _rosterIds = List.of(rosterIds) {
     _inputSub = _host.gameInputPackets.listen(_applyInput);
     _commandSub = _host.gameCommandPackets.listen(_applyCommand);
+    _readySub = _host.gameReadyPackets.listen(_applyReady);
   }
 
   final HostService _host;
@@ -23,6 +24,7 @@ class FutbolHostTransport implements MatrixSyncAdapter {
 
   StreamSubscription<Map<String, dynamic>>? _inputSub;
   StreamSubscription<Map<String, dynamic>>? _commandSub;
+  StreamSubscription<Map<String, dynamic>>? _readySub;
   FutbolMatchController? _controller;
   bool _disposed = false;
 
@@ -41,6 +43,19 @@ class FutbolHostTransport implements MatrixSyncAdapter {
       case null:
         break;
     }
+  }
+
+  void _applyReady(Map<String, dynamic> packet) {
+    final controller = _controller;
+    if (controller == null) return;
+    final playerId = packet['playerId'] as String?;
+    if (playerId == null) return;
+    final deviceIndex = _rosterIds.indexOf(playerId);
+    if (deviceIndex < 0) return;
+    controller.setReady(
+      deviceIndex,
+      ready: packet['ready'] as bool? ?? true,
+    );
   }
 
   void _applyInput(Map<String, dynamic> packet) {
@@ -69,6 +84,9 @@ class FutbolHostTransport implements MatrixSyncAdapter {
   }
 
   @override
+  void sendReady({required int deviceIndex, required bool ready}) {}
+
+  @override
   void sendSnapshot(MatrixWorldSnapshot snapshot) {
     _host.broadcastGameState(snapshot.toJson());
   }
@@ -84,6 +102,7 @@ class FutbolHostTransport implements MatrixSyncAdapter {
     _disposed = true;
     _inputSub?.cancel();
     _commandSub?.cancel();
+    _readySub?.cancel();
   }
 }
 
@@ -146,6 +165,11 @@ class FutbolClientTransport implements MatrixSyncAdapter {
       from: playerId,
       command: (paused ? PauseControlKey.pause : PauseControlKey.resume).key,
     );
+  }
+
+  @override
+  void sendReady({required int deviceIndex, required bool ready}) {
+    _client.sendGameReady(playerId: playerId, ready: ready);
   }
 
   @override

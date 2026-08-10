@@ -78,8 +78,8 @@ class _GameScreenState extends State<GameScreen> {
                 if (config == null) {
                   return const _LoadingView();
                 }
-                final canLeavePause =
-                    !state.isPaused || state.allPlayersReady;
+                final canLeavePause = !state.isPaused ||
+                    (state.allPlayersReady && _gameBloc.isAuthoritative);
                 return PopScope(
                   canPop: canLeavePause,
                   child: ScreenScaler(
@@ -125,6 +125,7 @@ class _GameScreenState extends State<GameScreen> {
                         if (state.isPaused)
                           PauseOverlay(
                             state: state,
+                            isHost: _gameBloc.isAuthoritative,
                             onReady: (playerId, ready) => _gameBloc
                                 .add(PlayerReadyChanged(playerId, ready: ready)),
                             onResume: () =>
@@ -1096,6 +1097,7 @@ class PauseOverlay extends StatelessWidget {
   const PauseOverlay({
     super.key,
     required this.state,
+    required this.isHost,
     required this.onReady,
     required this.onResume,
     required this.onRestart,
@@ -1103,6 +1105,7 @@ class PauseOverlay extends StatelessWidget {
   });
 
   final GameState state;
+  final bool isHost;
   final void Function(String playerId, bool ready) onReady;
   final VoidCallback onResume;
   final VoidCallback onRestart;
@@ -1115,6 +1118,7 @@ class PauseOverlay extends StatelessWidget {
         .length;
     final total = state.players.length;
     final allReady = state.allPlayersReady;
+    final canHostAct = allReady && isHost;
 
     return Container(
       color: Colors.black.withValues(alpha: 0.55),
@@ -1166,9 +1170,11 @@ class PauseOverlay extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             Text(
-              allReady
-                  ? 'Resume the match or quit to the lobby'
-                  : 'Waiting for the other players…\nResume, Restart, and Quit unlock when everyone is ready',
+              !allReady
+                  ? 'Waiting for the other players…\nResume unlocks for everyone; Restart and Quit are host-only'
+                  : isHost
+                      ? 'Resume the match, restart, or quit to the lobby'
+                      : 'Waiting for the host to resume, restart, or quit…',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,
@@ -1190,13 +1196,13 @@ class PauseOverlay extends StatelessWidget {
                 GlassButton(
                   label: 'Restart',
                   icon: Icons.refresh_rounded,
-                  onPressed: allReady ? onRestart : null,
+                  onPressed: canHostAct ? onRestart : null,
                 ),
                 GlassButton(
                   label: 'Quit',
                   icon: Icons.exit_to_app_rounded,
                   color: AppColors.danger,
-                  onPressed: allReady ? onQuit : null,
+                  onPressed: canHostAct ? onQuit : null,
                 ),
               ],
             ),

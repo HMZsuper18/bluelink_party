@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../data/models/team.dart';
 import '../../matrix_arena/game/matrix_viewport.dart';
 import '../game/futbol_interpolation.dart';
 import '../game/futbol_match_controller.dart';
@@ -225,8 +226,10 @@ class FutbolArenaPainter extends CustomPainter {
     for (final player in frame.players) {
       final center = viewport.worldToScreen(player.x, player.y);
       final radius = viewport.worldDeltaToScreen(controller.rules.playerRadius);
-      final teamColor =
-          player.deviceIndex.isEven ? AppColors.p1 : AppColors.p4;
+      // Roster order is red seats then blue, so index parity is not team.
+      final teamColor = controller.teamOf(player.deviceIndex) == Team.red
+          ? AppColors.p1
+          : AppColors.p4;
 
       if (player.isGoalkeeper) {
         final halfWidth = viewport.worldDeltaToScreen(

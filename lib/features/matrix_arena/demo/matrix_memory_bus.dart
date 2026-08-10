@@ -50,6 +50,9 @@ class MatrixMemoryBus implements MatrixSyncAdapter {
   }
 
   @override
+  void sendReady({required int deviceIndex, required bool ready}) {}
+
+  @override
   void dispose() {
     for (final client in _clients) {
       client.dispose();

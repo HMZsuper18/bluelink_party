@@ -67,6 +67,9 @@ class MatrixHostTransport implements MatrixSyncAdapter {
   }
 
   @override
+  void sendReady({required int deviceIndex, required bool ready}) {}
+
+  @override
   void sendSnapshot(MatrixWorldSnapshot snapshot) {
     _host.broadcastGameState(snapshot.toJson());
   }
@@ -142,6 +145,11 @@ class MatrixClientTransport implements MatrixSyncAdapter {
       from: localPlayerId,
       command: (paused ? PauseControlKey.pause : PauseControlKey.resume).key,
     );
+  }
+
+  @override
+  void sendReady({required int deviceIndex, required bool ready}) {
+    _client.sendGameReady(playerId: localPlayerId, ready: ready);
   }
 
   @override

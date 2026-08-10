@@ -291,6 +291,7 @@ class _MatrixArenaScreenState extends State<MatrixArenaScreen>
                             countdown: controller.countdownRemaining,
                             debugGuides: widget.debugGuides,
                             effects: _fx,
+                            elapsed: _lastTick.inMilliseconds / 1000,
                           ),
                         ),
                         if (_hitFlash > 0)
@@ -326,11 +327,7 @@ class _MatrixArenaScreenState extends State<MatrixArenaScreen>
                   Positioned.fill(child: _buildResultOverlay(context)),
                 IgnorePointer(
                   ignoring: controller.isPaused,
-                  child: _buildJoystick(zones),
-                ),
-                IgnorePointer(
-                  ignoring: controller.isPaused,
-                  child: _buildFireButton(zones),
+                  child: _buildControls(zones),
                 ),
                 _buildHealthBars(zones),
                 if (zones.tileIndicatorRect != null)
@@ -366,43 +363,45 @@ class _MatrixArenaScreenState extends State<MatrixArenaScreen>
     );
   }
 
-  Widget _buildJoystick(MatrixControlZones zones) {
-    final rect = zones.joystickRect;
-    return Positioned(
-      left: rect.left,
-      top: rect.top,
-      width: rect.width,
-      height: rect.height,
-      child: Center(
-        child: VirtualJoystick(
-          size: rect.width,
-          onChanged: (offset) {
-            _moveInput = offset;
-            _sendInput();
-          },
+  /// Joystick + fire button, laid out like Battle Sync (bottom-left /
+  /// bottom-right). The Positioned widgets must be direct children of a Stack
+  /// (ParentDataWidgets cannot live under IgnorePointer).
+  Widget _buildControls(MatrixControlZones zones) {
+    return Stack(
+      children: [
+        Positioned(
+          left: zones.joystickRect.left,
+          top: zones.joystickRect.top,
+          width: zones.joystickRect.width,
+          height: zones.joystickRect.height,
+          child: Center(
+            child: VirtualJoystick(
+              size: zones.joystickRect.width,
+              onChanged: (offset) {
+                _moveInput = offset;
+                _sendInput();
+              },
+            ),
+          ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildFireButton(MatrixControlZones zones) {
-    final rect = zones.fireRect;
-    return Positioned(
-      left: rect.left,
-      top: rect.top,
-      width: rect.width,
-      height: rect.height,
-      child: Center(
-        child: ActionButton(
-          size: rect.width,
-          label: 'FIRE',
-          color: AppColors.danger,
-          onPressedChanged: (pressed) {
-            _firing = pressed;
-            _sendInput();
-          },
+        Positioned(
+          left: zones.fireRect.left,
+          top: zones.fireRect.top,
+          width: zones.fireRect.width,
+          height: zones.fireRect.height,
+          child: Center(
+            child: ActionButton(
+              size: zones.fireRect.width,
+              label: 'FIRE',
+              color: AppColors.danger,
+              onPressedChanged: (pressed) {
+                _firing = pressed;
+                _sendInput();
+              },
+            ),
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -455,7 +454,9 @@ class _MatrixArenaScreenState extends State<MatrixArenaScreen>
 
   Widget _buildTileIndicator() {
     final tile = controller.localTile;
-    return Row(
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
@@ -476,6 +477,7 @@ class _MatrixArenaScreenState extends State<MatrixArenaScreen>
           ),
         ),
       ],
+      ),
     );
   }
 

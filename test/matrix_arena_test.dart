@@ -22,6 +22,9 @@ class _PauseAwareAdapter implements MatrixSyncAdapter {
   }
 
   @override
+  void sendReady({required int deviceIndex, required bool ready}) {}
+
+  @override
   void sendInput(MatrixInput input) {}
 
   @override

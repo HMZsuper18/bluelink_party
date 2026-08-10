@@ -106,6 +106,8 @@ class FutbolMatchController {
   double _snapshotClock = 0;
   int _snapshotSeq = 0;
   bool _paused = false;
+  bool _quitRequested = false;
+  final Set<int> _readyDeviceIndexes = {};
   final List<double> _kickCooldown = [];
 
   FutbolMatchPhase get phase => _phase;
@@ -119,6 +121,21 @@ class FutbolMatchController {
 
   /// True while the host has frozen the shared match for every device.
   bool get isPaused => _paused;
+
+  /// Host ended the match from the pause menu; every device should leave.
+  bool get quitRequested => _quitRequested;
+
+  /// Human roster seats that have readied up while paused.
+  Set<int> get readyDeviceIndexes => Set.unmodifiable(_readyDeviceIndexes);
+
+  /// True once every human seat (not the AI goalkeeper) has toggled ready.
+  bool get allPlayersReady {
+    if (deviceCount == 0) return false;
+    for (var i = 0; i < deviceCount; i++) {
+      if (!_readyDeviceIndexes.contains(i)) return false;
+    }
+    return true;
+  }
   int? get winnerIndex {
     if (!_winnerDecided) return null;
     if (_redScore == _blueScore) return null;
@@ -187,14 +204,14 @@ class FutbolMatchController {
   /// Negative indices are goalkeepers, encoded as red (-2) / blue (-1) in
   /// [_addOutnumberedKeeper]; they always fall through to the parity fallback,
   /// which intentionally preserves that encoding.
-  Team _teamOf(int deviceIndex) {
+  Team teamOf(int deviceIndex) {
     if (teams != null && deviceIndex >= 0 && deviceIndex < teams!.length) {
       return teams![deviceIndex];
     }
     return deviceIndex.isEven ? Team.red : Team.blue;
   }
 
-  bool _isRed(int deviceIndex) => _teamOf(deviceIndex) == Team.red;
+  bool _isRed(int deviceIndex) => teamOf(deviceIndex) == Team.red;
 
   MatrixViewportCamera camera(Size screenSize) {
     return MatrixViewportCamera(tile: localTile, screenSize: screenSize);
@@ -279,6 +296,8 @@ class FutbolMatchController {
   void start() {
     if (!isHost) return;
     _paused = false;
+    _quitRequested = false;
+    _readyDeviceIndexes.clear();
     _snapshotSeq = 0;
     _snapshotClock = 0;
     _phase = FutbolMatchPhase.calibrating;
@@ -616,6 +635,8 @@ class FutbolMatchController {
         kickOff: _kickOff,
         phase: phaseKey ?? futbolPhaseKey(_phase),
         paused: _paused,
+        readyDeviceIndexes: _readyDeviceIndexes.toList(growable: false)..sort(),
+        quit: _quitRequested,
       );
 
   List<MatrixPlayerSnapshot> _playerSnapshots() {
@@ -704,14 +725,74 @@ class FutbolMatchController {
   void pause() {
     if (!isHost || _paused) return;
     _paused = true;
+    _readyDeviceIndexes.clear();
+    _broadcastPhase();
+    _broadcastSnapshot();
+  }
+
+  /// Host only: unfreeze the shared match. Requires every human seat ready,
+  /// matching Battle Sync so Resume / Quit stay deliberate.
+  void resume() {
+    if (!isHost || !_paused || !allPlayersReady) return;
+    _paused = false;
+    _readyDeviceIndexes.clear();
+    _broadcastPhase();
+    _broadcastSnapshot();
+  }
+
+  /// Host only: reset scores and re-enter countdown after everyone is ready.
+  void restart() {
+    if (!isHost || !_paused || !allPlayersReady) return;
+    _paused = false;
+    _quitRequested = false;
+    _readyDeviceIndexes.clear();
+    _redScore = 0;
+    _blueScore = 0;
+    _matchClock = 0;
+    _winnerDecided = false;
+    _inputs.clear();
+    for (var i = 0; i < _kickCooldown.length; i++) {
+      _kickCooldown[i] = 0;
+    }
+    _phase = FutbolMatchPhase.countdown;
+    _phaseTimer = rules.countdownSeconds;
+    _positionAtKickOff();
+    _broadcastPhase();
+    _broadcastSnapshot();
+  }
+
+  /// Host only: end the match for every device after everyone is ready.
+  void quit() {
+    if (!isHost || !_paused || !allPlayersReady) return;
+    _quitRequested = true;
+    _paused = false;
+    _readyDeviceIndexes.clear();
+    _broadcastSnapshot();
     _broadcastPhase();
   }
 
-  /// Host only: unfreeze the shared match.
-  void resume() {
+  /// Host only: mark [deviceIndex] ready (or not) while paused.
+  void setReady(int deviceIndex, {required bool ready}) {
     if (!isHost || !_paused) return;
-    _paused = false;
-    _broadcastPhase();
+    if (deviceIndex < 0 || deviceIndex >= deviceCount) return;
+    if (ready) {
+      _readyDeviceIndexes.add(deviceIndex);
+    } else {
+      _readyDeviceIndexes.remove(deviceIndex);
+    }
+    // Stay paused once everyone is ready so Resume / Quit can be chosen
+    // deliberately — auto-resuming made Quit unreachable on the host.
+    _broadcastSnapshot();
+  }
+
+  /// Any device: toggle this seat's ready-to-continue flag. Host applies
+  /// locally; clients forward over the game-ready channel.
+  void requestReady(bool ready) {
+    if (isHost) {
+      setReady(deviceIndex, ready: ready);
+    } else {
+      adapter.sendReady(deviceIndex: deviceIndex, ready: ready);
+    }
   }
 
   /// Any device: pause/resume the shared match. The host applies the request
@@ -735,6 +816,10 @@ class FutbolMatchController {
     if (futbol == null) return;
     _phase = futbolPhaseFromKey(futbol.phase);
     _paused = futbol.paused;
+    _quitRequested = futbol.quit;
+    _readyDeviceIndexes
+      ..clear()
+      ..addAll(futbol.readyDeviceIndexes);
     _redScore = futbol.redScore;
     _blueScore = futbol.blueScore;
     _scoredBy = futbol.scoredBy;

@@ -12,6 +12,10 @@ abstract class MatrixSyncAdapter {
   /// network path (a host controller applies the request directly).
   void requestPause(bool paused);
 
+  /// Device -> host: toggle this seat's ready-to-continue state while paused.
+  /// Host controllers apply ready locally; clients forward over game-ready.
+  void sendReady({required int deviceIndex, required bool ready});
+
   void dispose();
 }
 
@@ -29,6 +33,9 @@ class NoopMatrixSyncAdapter implements MatrixSyncAdapter {
 
   @override
   void requestPause(bool paused) {}
+
+  @override
+  void sendReady({required int deviceIndex, required bool ready}) {}
 
   @override
   void dispose() {}

@@ -227,10 +227,45 @@ void main() {
         [
           GameCommand.pause,
           GameCommand.resume,
-          GameCommand.restart,
-          GameCommand.quit,
         ],
+        reason: 'restart and quit are host-only; clients must not forward them',
       );
+      expect(bloc.state.isPaused, isTrue,
+          reason: 'client stays paused until the host acts');
+
+      await bloc.close();
+    });
+
+    test('client cannot quit or restart from pause even when everyone is ready',
+        () async {
+      final sync = FakeSyncAdapter(isHost: false, localPlayerId: 'c1');
+      final bloc = GameBloc(sync: sync);
+      bloc.add(MatchStarted(
+        seeded(const [
+          PlayerSlot(team: Team.red, seat: 0, playerId: 'h1', playerName: 'Host'),
+          PlayerSlot(team: Team.blue, seat: 0, playerId: 'c1', playerName: 'Guest'),
+        ]),
+      ));
+      await Future<void>.delayed(const Duration(milliseconds: 20));
+      sync.emitEvent(RemoteSnapshotEvent(snapshotWith(
+        phase: GamePhase.inGame,
+        isPaused: true,
+        readyPlayerIds: const ['h1', 'c1'],
+        players: [
+          player(id: 'h1', team: Team.red, x: 40, y: 100),
+          player(id: 'c1', team: Team.blue, x: 200, y: 100, local: true),
+        ],
+      )));
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+      expect(bloc.state.allPlayersReady, isTrue);
+
+      bloc.add(const RestartMatch());
+      bloc.add(const ReturnToLobby());
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+
+      expect(sync.sentCommands, isEmpty);
+      expect(bloc.state.phase, GamePhase.inGame);
+      expect(bloc.state.isPaused, isTrue);
 
       await bloc.close();
     });
@@ -323,7 +358,7 @@ void main() {
       await bloc.close();
     });
 
-    test('quit command returns everyone to the lobby', () async {
+    test('quit from pause is host-only after every player is ready', () async {
       final sync = FakeSyncAdapter(isHost: true, localPlayerId: 'h1');
       final bloc = GameBloc(sync: sync);
       bloc.add(MatchStarted(
@@ -340,7 +375,13 @@ void main() {
       sync.emitEvent(const RemoteReadyEvent(playerId: 'c1', ready: true));
       await Future<void>.delayed(const Duration(milliseconds: 30));
 
+      // A remote quit request must be ignored — only the host UI may quit.
       sync.emitEvent(const RemoteCommandEvent(GameCommand.quit));
+      await Future<void>.delayed(const Duration(milliseconds: 50));
+      expect(bloc.state.phase, GamePhase.inGame);
+      expect(bloc.state.isPaused, isTrue);
+
+      bloc.add(const ReturnToLobby());
       await Future<void>.delayed(const Duration(milliseconds: 50));
 
       expect(bloc.state.phase, GamePhase.lobby);
@@ -396,7 +437,7 @@ void main() {
       await bloc.close();
     });
 
-    test('restart command re-enters the countdown and clears the field', () async {
+    test('host restart re-enters the countdown and clears the field', () async {
       final sync = FakeSyncAdapter(isHost: true, localPlayerId: 'h1');
       final bloc = GameBloc(sync: sync);
       bloc.add(MatchStarted(
@@ -408,7 +449,12 @@ void main() {
       bloc.add(const CountdownFinished());
       await Future<void>.delayed(const Duration(milliseconds: 60));
 
+      // Remote restart requests are ignored; only the host UI may restart.
       sync.emitEvent(const RemoteCommandEvent(GameCommand.restart));
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+      expect(bloc.state.phase, GamePhase.inGame);
+
+      bloc.add(const RestartMatch());
       await Future<void>.delayed(const Duration(milliseconds: 30));
 
       expect(bloc.state.phase, GamePhase.countdown);

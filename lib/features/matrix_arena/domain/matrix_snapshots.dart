@@ -230,6 +230,8 @@ class FutbolWorld {
     this.kickOff = false,
     this.phase = 'calibrating',
     this.paused = false,
+    this.readyDeviceIndexes = const [],
+    this.quit = false,
   });
 
   final double ballX;
@@ -249,6 +251,14 @@ class FutbolWorld {
   /// broadcast (futbol snapshots never carry a separate phase message).
   final bool paused;
 
+  /// Roster device indexes that have readied up while [paused]. Cleared on
+  /// pause/resume; Resume unlocks for everyone once every human seat is listed,
+  /// while Restart / Quit stay host-only.
+  final List<int> readyDeviceIndexes;
+
+  /// Host has ended the match from the pause menu; every device should leave.
+  final bool quit;
+
   Map<String, dynamic> toJson() => {
         'x': ballX,
         'y': ballY,
@@ -262,6 +272,8 @@ class FutbolWorld {
         'k': kickOff,
         'p': phase,
         if (paused) 'z': true,
+        if (readyDeviceIndexes.isNotEmpty) 'rd': readyDeviceIndexes,
+        if (quit) 'q': true,
       };
 
   factory FutbolWorld.fromJson(Map<String, dynamic> json) => FutbolWorld(
@@ -277,6 +289,11 @@ class FutbolWorld {
         kickOff: json['k'] == true,
         phase: json['p'] as String? ?? 'calibrating',
         paused: json['z'] == true,
+        readyDeviceIndexes: [
+          for (final id in (json['rd'] as List<dynamic>? ?? const []))
+            (id as num).toInt(),
+        ],
+        quit: json['q'] == true,
       );
 }
 

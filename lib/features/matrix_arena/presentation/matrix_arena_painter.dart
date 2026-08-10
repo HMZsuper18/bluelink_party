@@ -18,6 +18,7 @@ class MatrixArenaPainter extends CustomPainter {
     required this.countdown,
     this.debugGuides = false,
     this.effects = const [],
+    this.elapsed = 0,
   });
 
   final MatrixViewportCamera viewport;
@@ -27,6 +28,9 @@ class MatrixArenaPainter extends CustomPainter {
   final double countdown;
   final bool debugGuides;
   final List<MatrixFx> effects;
+
+  /// Running match clock in seconds; drives idle animations (engine flicker).
+  final double elapsed;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -225,43 +229,76 @@ class MatrixArenaPainter extends CustomPainter {
       if (!isPotentiallyVisible(center, radius * 2)) continue;
       final color = SlotVisuals.colorOf(player.deviceIndex);
 
-      final halo = Paint()
-        ..color = color.withValues(alpha: 0.26)
-        ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.9);
-      canvas.drawCircle(center, radius * 1.5, halo);
-
-      final body = Paint()..color = color;
-      canvas.drawCircle(center, radius, body);
-
-      final rim = Paint()
-        ..color = Colors.white.withValues(alpha: 0.85)
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.5;
-      canvas.drawCircle(center, radius, rim);
-
-      final facingX = cos(player.facingYaw);
-      final facingY = sin(player.facingYaw);
-      final tip = center + Offset(facingX, facingY) * (radius + 7);
-      final sideA = center +
-          Offset(facingX, facingY) * (radius * 0.45) -
-          Offset(-facingY, facingX) * (radius * 0.6);
-      final sideB = center +
-          Offset(facingX, facingY) * (radius * 0.45) +
-          Offset(-facingY, facingX) * (radius * 0.6);
-      final chevron = Path()
-        ..moveTo(tip.dx, tip.dy)
-        ..lineTo(sideA.dx, sideA.dy)
-        ..lineTo(sideB.dx, sideB.dy)
-        ..close();
-      canvas.drawPath(
-        chevron,
-        Paint()
-          ..color = Colors.white
-          ..style = PaintingStyle.fill,
-      );
-
+      _paintShip(canvas, player, center, radius, color);
       _paintHealthBar(canvas, center, radius, player);
     }
+  }
+
+  /// Battle-Sync-style triangle ship: a tapered arrow hull along the facing
+  /// axis with an engine exhaust and cockpit accent, rotated to the player's
+  /// current heading.
+  ///
+  /// Mirrors `MatchPainter._paintPlayer` (battle sync) deliberately — keep the
+  /// hull proportions in sync if the Battle Sync ship style ever changes.
+  void _paintShip(
+    Canvas canvas,
+    MatrixPlayerSnapshot player,
+    Offset center,
+    double radius,
+    Color color,
+  ) {
+    // Soft team under-glow.
+    final glow = Paint()
+      ..color = color.withValues(alpha: 0.26)
+      ..maskFilter = MaskFilter.blur(BlurStyle.normal, radius * 0.9);
+    canvas.drawCircle(center, radius * 1.5, glow);
+
+    canvas.save();
+    canvas.translate(center.dx, center.dy);
+    canvas.rotate(player.facingYaw);
+
+    // Engine exhaust flicker behind the hull while the ship is in play.
+    final flicker =
+        0.5 + 0.5 * sin(elapsed * 30 + player.deviceIndex * 2.1);
+    final engine = Paint()
+      ..color = Colors.orangeAccent.withValues(alpha: 0.65 * flicker)
+      ..strokeWidth = (radius * 0.18).clamp(1.5, 4.0)
+      ..strokeCap = StrokeCap.round;
+    canvas.drawLine(
+      Offset(-radius * 0.8, 0),
+      Offset(-radius * (1.1 + 0.25 * flicker), 0),
+      engine,
+    );
+
+    // Hull: tapered arrow along the facing axis, matching Battle Sync ships.
+    final hull = Path()
+      ..moveTo(radius * 1.05, 0)
+      ..lineTo(-radius * 0.75, radius * 0.8)
+      ..lineTo(-radius * 0.45, 0)
+      ..lineTo(-radius * 0.75, -radius * 0.8)
+      ..close();
+    canvas.drawPath(
+      hull,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.fill,
+    );
+    canvas.drawPath(
+      hull,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.55)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = (radius * 0.08).clamp(1.0, 2.5),
+    );
+
+    // Cockpit accent.
+    canvas.drawCircle(
+      Offset(radius * 0.35, 0),
+      radius * 0.28,
+      Paint()..color = Colors.white.withValues(alpha: 0.85),
+    );
+
+    canvas.restore();
   }
 
   void _paintHealthBar(

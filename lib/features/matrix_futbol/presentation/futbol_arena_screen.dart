@@ -5,6 +5,7 @@ import 'package:flutter/scheduler.dart';
 
 import '../../../core/audio/sfx_service.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../data/models/team.dart';
 import '../../battle_sync/presentation/widgets/action_button.dart';
 import '../../battle_sync/presentation/widgets/virtual_joystick.dart';
 import '../../game/presentation/pause_menu.dart';
@@ -154,84 +155,119 @@ class _FutbolArenaScreenState extends State<FutbolArenaScreen>
     }
   }
 
+  List<PauseReadySeat> _pauseSeats() {
+    return [
+      for (var i = 0; i < controller.deviceCount; i++)
+        PauseReadySeat(
+          name: 'P${i + 1}',
+          accent: controller.teamOf(i) == Team.red
+              ? AppColors.p1
+              : AppColors.p4,
+          ready: controller.readyDeviceIndexes.contains(i),
+          isLocal: i == controller.deviceIndex,
+        ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final size = Size(constraints.maxWidth, constraints.maxHeight);
-            final viewport = widget.viewportOverride ?? controller.camera(size);
-            final zones = MatrixControlZones.compute(
-              screenSize: size,
-              playRect: viewport.playRect,
-              padding: EdgeInsets.zero,
-            );
-            final frame = controller.renderFrame();
+    if (controller.quitRequested) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && controller.quitRequested) _exit();
+      });
+    }
 
-            final preGame = controller.phase == FutbolMatchPhase.calibrating ||
-                controller.phase == FutbolMatchPhase.countdown;
+    final canLeavePause = !controller.isPaused ||
+        (controller.allPlayersReady && controller.isHost);
+    return PopScope(
+      canPop: canLeavePause,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        body: SafeArea(
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final size = Size(constraints.maxWidth, constraints.maxHeight);
+              final viewport =
+                  widget.viewportOverride ?? controller.camera(size);
+              final zones = MatrixControlZones.compute(
+                screenSize: size,
+                playRect: viewport.playRect,
+                padding: EdgeInsets.zero,
+              );
+              final frame = controller.renderFrame();
 
-            return Stack(
-              children: [
-                Positioned.fill(
-                  child: CustomPaint(
-                    painter: FutbolArenaPainter(
-                      controller: controller,
-                      screenSize: size,
-                      frame: frame,
-                      effects: _fx,
-                      viewport: viewport,
-                    ),
-                  ),
-                ),
-                IgnorePointer(
-                  ignoring: controller.isPaused,
-                  child: _buildControls(zones),
-                ),
-                if (controller.isCelebrating)
-                  _buildGoalBanner(frame),
-                if (controller.isMatchOver)
-                  _buildResultOverlay(frame),
-                if (preGame)
+              final preGame =
+                  controller.phase == FutbolMatchPhase.calibrating ||
+                      controller.phase == FutbolMatchPhase.countdown;
+
+              return Stack(
+                children: [
                   Positioned.fill(
-                    child: CalibrationOverlay(
-                      viewport: viewport,
-                      tile: controller.localTile,
-                      phaseLabel: controller.phase == FutbolMatchPhase.countdown
-                          ? 'GET READY'
-                          : 'ALIGN YOUR SCREEN',
-                      countdown: controller.phase == FutbolMatchPhase.countdown
-                          ? controller.phaseTimer
-                          : controller.phaseTimer.clamp(0, 6),
-                      matrix: controller.matrix,
-                      deviceIndex: controller.deviceIndex,
+                    child: CustomPaint(
+                      painter: FutbolArenaPainter(
+                        controller: controller,
+                        screenSize: size,
+                        frame: frame,
+                        effects: _fx,
+                        viewport: viewport,
+                      ),
                     ),
                   ),
-                Positioned(
-                  top: 8,
-                  right: 12,
-                  child: _phaseChip(controller.phase),
-                ),
-                if (_pauseAvailable)
+                  IgnorePointer(
+                    ignoring: controller.isPaused,
+                    child: _buildControls(zones),
+                  ),
+                  if (controller.isCelebrating) _buildGoalBanner(frame),
+                  if (controller.isMatchOver) _buildResultOverlay(frame),
+                  if (preGame)
+                    Positioned.fill(
+                      child: CalibrationOverlay(
+                        viewport: viewport,
+                        tile: controller.localTile,
+                        phaseLabel:
+                            controller.phase == FutbolMatchPhase.countdown
+                                ? 'GET READY'
+                                : 'ALIGN YOUR SCREEN',
+                        countdown:
+                            controller.phase == FutbolMatchPhase.countdown
+                                ? controller.phaseTimer
+                                : controller.phaseTimer.clamp(0, 6),
+                        matrix: controller.matrix,
+                        deviceIndex: controller.deviceIndex,
+                      ),
+                    ),
                   Positioned(
                     top: 8,
-                    left: 12,
-                    child: PauseMenuButton(
-                      onPressed: () => controller.requestPause(true),
-                    ),
+                    right: 12,
+                    child: _phaseChip(controller.phase),
                   ),
-                if (controller.isPaused)
-                  Positioned.fill(
-                    child: PauseMenuOverlay(
-                      onResume: () => controller.requestPause(false),
-                      onQuit: _exit,
+                  if (_pauseAvailable)
+                    Positioned(
+                      top: 8,
+                      left: 12,
+                      child: PauseMenuButton(
+                        onPressed: () => controller.requestPause(true),
+                      ),
                     ),
-                  ),
-              ],
-            );
-          },
+                  if (controller.isPaused)
+                    Positioned.fill(
+                      child: PauseMenuOverlay(
+                        seats: _pauseSeats(),
+                        isHost: controller.isHost,
+                        onToggleLocalReady: () {
+                          final ready = controller.readyDeviceIndexes
+                              .contains(controller.deviceIndex);
+                          controller.requestReady(!ready);
+                        },
+                        onResume: () => controller.requestPause(false),
+                        onRestart: controller.restart,
+                        onQuit: controller.quit,
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );

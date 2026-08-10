@@ -135,15 +135,19 @@ class MatrixControlZones {
       );
     }
 
+    // Fallback: when the arena letterboxes the screen (e.g. portrait phones)
+    // there is no strip to dock controls in, so pin them to the screen bottom
+    // corners exactly like Battle Sync instead of floating them at the
+    // arena's mid-screen bottom edge.
     final joystickFallback = Rect.fromLTWH(
-      playRect.left + 16,
-      playRect.bottom - 156,
+      padding.left + 16,
+      screenSize.height - padding.bottom - 16 - 140,
       140,
       140,
     );
     final fireFallback = Rect.fromLTWH(
-      playRect.right - 100,
-      playRect.bottom - 100,
+      screenSize.width - padding.right - 16 - 84,
+      screenSize.height - padding.bottom - 16 - 84,
       84,
       84,
     );
