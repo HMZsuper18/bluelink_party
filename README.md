@@ -1,5 +1,9 @@
 # BlueLink Party
 
+<p align="center">
+  <img src="web/icons/Icon-512.png" alt="BlueLink Party icon" width="140" />
+</p>
+
 A local multiplayer party game built with Flutter. Up to four phones on the same Wi-Fi network share one arena: the host runs the lobby and match simulation, and every device renders its own view of the action in real time.
 
 ## Game modes
