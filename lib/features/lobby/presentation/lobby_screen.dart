@@ -9,6 +9,7 @@ import '../../../data/models/lobby_room.dart';
 import '../../game/presentation/game_screen.dart';
 import '../../matrix_arena/presentation/matrix_arena_screen.dart';
 import '../../matrix_futbol/presentation/futbol_arena_screen.dart';
+import '../../matrix_futbol/presentation/futbol_launcher_icon.dart';
 import '../bloc/lobby_bloc.dart';
 import '../bloc/lobby_event.dart';
 import '../bloc/lobby_state.dart';
@@ -274,16 +275,13 @@ class _LobbyViewState extends State<_LobbyView> {
         Container(
           width: 42,
           height: 42,
+          clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
             color: AppColors.accent.withValues(alpha: 0.14),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.borderStrong),
           ),
-          child: const Icon(
-            Icons.gamepad_rounded,
-            color: AppColors.accent,
-            size: 24,
-          ),
+          child: const FutbolLauncherIcon(),
         ),
         const SizedBox(width: 12),
         Expanded(

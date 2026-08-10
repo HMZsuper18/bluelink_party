@@ -2,10 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/app_colors.dart';
+
 // Standalone sprite painters for the Pixel Futbol players. Shared between the
-// in-game [FutbolArenaPainter] and the offline image generator
-// (`tool/render_futbol_player.dart`) so rendered art never drifts from what
-// players see on screen.
+// in-game [FutbolArenaPainter] and the offline image generators
+// (`tool/render_futbol_player.dart`, `tool/render_app_icon.dart`) so rendered
+// art never drifts from what players see on screen.
 
 /// Turf gradient used for the pitch base, shared with the offline image
 /// generator so the hero backdrop matches the in-game pitch.
@@ -108,6 +110,89 @@ void paintOutfieldPlayer(
     Paint()
       ..color = const Color(0xFFF2C58F)
       ..style = PaintingStyle.fill,
+  );
+}
+
+/// Paints the football pitch backdrop used by the app icon ([paintAppIcon])
+/// and the launcher icon's adaptive background layer: turf gradient, mowing
+/// stripes, halfway line, centre circle and a soft vignette.
+void paintAppPitch(Canvas canvas, Size size) {
+  // Base pitch gradient.
+  canvas.drawRect(
+    Offset.zero & size,
+    Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [futbolPitchTop, futbolPitchBottom],
+      ).createShader(Offset.zero & size),
+  );
+
+  // Faint mowing stripes.
+  final stripe = Paint()..color = Colors.white.withValues(alpha: 0.05);
+  final stripeWidth = size.width / 16;
+  for (var x = 0.0; x < size.width; x += stripeWidth * 2) {
+    canvas.drawRect(
+      Rect.fromLTWH(x, 0, stripeWidth, size.height),
+      stripe,
+    );
+  }
+
+  // Field markings: halfway line, centre circle and centre spot.
+  final mark = Paint()
+    ..color = Colors.white.withValues(alpha: 0.38)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = size.width * 0.006;
+  canvas.drawLine(
+    Offset(size.width / 2, 0),
+    Offset(size.width / 2, size.height),
+    mark,
+  );
+  canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width * 0.24, mark);
+  canvas.drawCircle(
+    Offset(size.width / 2, size.height / 2),
+    size.width * 0.012,
+    Paint()
+      ..color = Colors.white.withValues(alpha: 0.38)
+      ..style = PaintingStyle.fill,
+  );
+
+  // Soft vignette for depth.
+  canvas.drawRect(
+    Offset.zero & size,
+    Paint()
+      ..shader = RadialGradient(
+        radius: 1.1,
+        colors: [
+          Colors.transparent,
+          Colors.black.withValues(alpha: 0.24),
+        ],
+        stops: const [0.6, 1.0],
+      ).createShader(Offset.zero & size),
+  );
+}
+
+/// Paints the BlueLink Party app icon: a football pitch backdrop with an
+/// outfield player in the P1 kit caught mid-stride facing up the pitch. This is
+/// the exact art used for the Android launcher icon and the in-app logo
+/// ([FutbolLauncherIcon]), so the two never drift apart.
+void paintAppIcon(
+  Canvas canvas,
+  Size size, {
+  double playerRadiusFraction = 0.30,
+  double walkPhase = pi / 2,
+}) {
+  paintAppPitch(canvas, size);
+
+  // Player mid-stride in the P1 kit.
+  paintOutfieldPlayer(
+    canvas,
+    Offset(size.width / 2, size.height / 2),
+    size.width * playerRadiusFraction,
+    AppColors.p1,
+    -pi / 2,
+    walkPhase: walkPhase,
+    stride: 1,
   );
 }
 

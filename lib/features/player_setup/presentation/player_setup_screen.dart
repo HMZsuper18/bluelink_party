@@ -4,6 +4,7 @@ import '../../../core/theme/acrylic.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/repositories/profile_repository.dart';
 import '../../lobby/presentation/lobby_screen.dart';
+import '../../matrix_futbol/presentation/futbol_launcher_icon.dart';
 
 /// First screen of the game: choose your player name. The name is saved on
 /// device (shared_preferences) and pre-filled on the next launch.
@@ -74,13 +75,13 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
                       child: Container(
                         width: 76,
                         height: 76,
+                        clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
                           color: AppColors.accent.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(22),
                           border: Border.all(color: AppColors.borderStrong),
                         ),
-                        child: const Icon(Icons.gamepad_rounded,
-                            color: AppColors.accent, size: 38),
+                        child: const FutbolLauncherIcon(),
                       ),
                     ),
                     const SizedBox(height: 20),

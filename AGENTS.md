@@ -15,6 +15,8 @@ flutter pub get                          # install dependencies
 flutter analyze                          # lint + static analysis (run before finishing any change)
 flutter test                             # all tests, incl. loopback UDP e2e tests (bind real sockets; may be slow)
 dart run tool/generate_sfx.dart           # regenerate assets/audio/*.wav (procedural)
+flutter test tool/render_app_icon.dart        # regenerate the Android launcher icon set (procedural)
+flutter test tool/render_futbol_player.dart  # regenerate images/futbol_player.png (README hero)
 ```
 
 Always run `flutter analyze` and the relevant `flutter test` suite after touching code.
