@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/acrylic.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/widgets/app_launcher_icon.dart';
 import '../../../data/repositories/profile_repository.dart';
 import '../../lobby/presentation/lobby_screen.dart';
-import '../../matrix_futbol/presentation/futbol_launcher_icon.dart';
 
 /// First screen of the game: choose your player name. The name is saved on
 /// device (shared_preferences) and pre-filled on the next launch.
@@ -81,7 +81,7 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
                           borderRadius: BorderRadius.circular(22),
                           border: Border.all(color: AppColors.borderStrong),
                         ),
-                        child: const FutbolLauncherIcon(),
+                        child: const AppLauncherIcon(),
                       ),
                     ),
                     const SizedBox(height: 20),

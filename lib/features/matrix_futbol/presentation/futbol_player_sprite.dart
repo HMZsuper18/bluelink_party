@@ -172,10 +172,9 @@ void paintAppPitch(Canvas canvas, Size size) {
   );
 }
 
-/// Paints the BlueLink Party app icon: a football pitch backdrop with an
-/// outfield player in the P1 kit caught mid-stride facing up the pitch. This is
-/// the exact art used for the Android launcher icon and the in-app logo
-/// ([FutbolLauncherIcon]), so the two never drift apart.
+/// Paints the player-based launcher icon design rendered by
+/// `tool/render_app_icon.dart`: a football pitch backdrop with an outfield
+/// player in the P1 kit caught mid-stride facing up the pitch.
 void paintAppIcon(
   Canvas canvas,
   Size size, {

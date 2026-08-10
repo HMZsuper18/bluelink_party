@@ -4,8 +4,7 @@
 // The icon reuses the shared in-game player sprite
 // (`lib/features/matrix_futbol/presentation/futbol_player_sprite.dart`) and the
 // pitch backdrop painted by the same code that generates the README hero art,
-// so the launcher icon is exactly what the game looks like — and matches the
-// in-app [FutbolLauncherIcon] logo.
+// so the launcher icon is exactly what the game looks like.
 //
 // Writes:
 //   * legacy `ic_launcher.png` (48 / 72 / 96 / 144 / 192) — full-bleed square

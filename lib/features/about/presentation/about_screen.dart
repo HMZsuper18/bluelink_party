@@ -4,7 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/theme/acrylic.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../matrix_futbol/presentation/futbol_launcher_icon.dart';
+import '../../../core/widgets/app_launcher_icon.dart';
 
 /// About page: version, author details and a link to the developer portfolio.
 class AboutScreen extends StatefulWidget {
@@ -78,7 +78,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(color: AppColors.borderStrong),
                         ),
-                        child: const FutbolLauncherIcon(),
+                        child: const AppLauncherIcon(),
                       ),
                     ),
                     const SizedBox(height: 16),

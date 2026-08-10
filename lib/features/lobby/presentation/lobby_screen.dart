@@ -7,9 +7,9 @@ import '../../../data/models/game_mode.dart';
 import '../../../data/models/game_phase.dart';
 import '../../../data/models/lobby_room.dart';
 import '../../game/presentation/game_screen.dart';
+import '../../../core/widgets/app_launcher_icon.dart';
 import '../../matrix_arena/presentation/matrix_arena_screen.dart';
 import '../../matrix_futbol/presentation/futbol_arena_screen.dart';
-import '../../matrix_futbol/presentation/futbol_launcher_icon.dart';
 import '../bloc/lobby_bloc.dart';
 import '../bloc/lobby_event.dart';
 import '../bloc/lobby_state.dart';
@@ -281,7 +281,7 @@ class _LobbyViewState extends State<_LobbyView> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.borderStrong),
           ),
-          child: const FutbolLauncherIcon(),
+          child: const AppLauncherIcon(),
         ),
         const SizedBox(width: 12),
         Expanded(
