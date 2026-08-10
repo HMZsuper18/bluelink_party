@@ -1,4 +1,4 @@
-# ScreenShift
+# BlueLink Party
 
 A local multiplayer party game built with Flutter. Up to four phones on the same Wi-Fi network share one arena: the host runs the lobby and match simulation, and every device renders its own view of the action in real time.
 

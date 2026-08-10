@@ -1,17 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/data/models/game_phase.dart';
-import 'package:screen_shift/data/models/match_config.dart';
-import 'package:screen_shift/data/models/match_event.dart';
-import 'package:screen_shift/data/models/player_slot.dart';
-import 'package:screen_shift/data/models/team.dart';
-import 'package:screen_shift/features/game/bloc/game_bloc.dart';
-import 'package:screen_shift/features/game/bloc/game_event.dart';
-import 'package:screen_shift/features/game/domain/match_player.dart';
-import 'package:screen_shift/features/game/domain/match_projectile.dart';
-import 'package:screen_shift/features/game/sync/game_snapshot.dart';
-import 'package:screen_shift/features/game/sync/game_sync_adapter.dart';
+import 'package:bluelink_party/data/models/game_phase.dart';
+import 'package:bluelink_party/data/models/match_config.dart';
+import 'package:bluelink_party/data/models/match_event.dart';
+import 'package:bluelink_party/data/models/player_slot.dart';
+import 'package:bluelink_party/data/models/team.dart';
+import 'package:bluelink_party/features/game/bloc/game_bloc.dart';
+import 'package:bluelink_party/features/game/bloc/game_event.dart';
+import 'package:bluelink_party/features/game/domain/match_player.dart';
+import 'package:bluelink_party/features/game/domain/match_projectile.dart';
+import 'package:bluelink_party/features/game/sync/game_snapshot.dart';
+import 'package:bluelink_party/features/game/sync/game_sync_adapter.dart';
 
 MatchEvent seeded(List<PlayerSlot> players) {
   return MatchEvent(

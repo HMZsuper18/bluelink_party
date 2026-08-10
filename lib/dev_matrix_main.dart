@@ -13,7 +13,7 @@ class MatrixDemoApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'ScreenShift Matrix Sandbox',
+      title: 'BlueLink Party Matrix Sandbox',
       theme: ThemeData(
         brightness: Brightness.dark,
         scaffoldBackgroundColor: Colors.black,

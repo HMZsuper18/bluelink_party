@@ -17,7 +17,7 @@ class FutbolDeviceLabApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Screen Shift Futbol Device Lab',
+      title: 'BlueLink Party Futbol Device Lab',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,

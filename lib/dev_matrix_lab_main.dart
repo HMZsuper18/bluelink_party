@@ -19,7 +19,7 @@ class DeviceLabApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Screen Shift Device Lab',
+      title: 'BlueLink Party Device Lab',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,

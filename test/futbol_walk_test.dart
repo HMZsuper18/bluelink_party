@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_grid.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_snapshots.dart';
-import 'package:screen_shift/features/matrix_futbol/game/futbol_interpolation.dart';
-import 'package:screen_shift/features/matrix_futbol/game/futbol_match_controller.dart';
-import 'package:screen_shift/features/matrix_futbol/game/futbol_walk_animator.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_grid.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_snapshots.dart';
+import 'package:bluelink_party/features/matrix_futbol/game/futbol_interpolation.dart';
+import 'package:bluelink_party/features/matrix_futbol/game/futbol_match_controller.dart';
+import 'package:bluelink_party/features/matrix_futbol/game/futbol_walk_animator.dart';
 
 MatrixPlayerSnapshot _snap(int index, double x, double y,
         {bool keeper = false}) =>

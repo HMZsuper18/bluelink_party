@@ -1,11 +1,11 @@
 // ignore_for_file: avoid_print
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/data/models/team.dart';
-import 'package:screen_shift/data/repositories/wifi_info_repository.dart';
-import 'package:screen_shift/features/game/bloc/game_bloc.dart';
-import 'package:screen_shift/features/game/bloc/game_event.dart';
-import 'package:screen_shift/features/lobby/bloc/lobby_bloc.dart';
-import 'package:screen_shift/features/lobby/bloc/lobby_event.dart';
+import 'package:bluelink_party/data/models/team.dart';
+import 'package:bluelink_party/data/repositories/wifi_info_repository.dart';
+import 'package:bluelink_party/features/game/bloc/game_bloc.dart';
+import 'package:bluelink_party/features/game/bloc/game_event.dart';
+import 'package:bluelink_party/features/lobby/bloc/lobby_bloc.dart';
+import 'package:bluelink_party/features/lobby/bloc/lobby_event.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Stub for the Android multicast lock; loopback does not need it.

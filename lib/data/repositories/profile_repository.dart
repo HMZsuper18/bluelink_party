@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// instances (e.g. two desktop copies on one machine) never share an identity,
 /// which would make the host reject one of them as a duplicate.
 class ProfileRepository {
-  static const _nameKey = 'screen_shift.player_name';
+  static const _nameKey = 'bluelink_party.player_name';
 
   static const _idAlphabet = 'abcdefghjkmnpqrstuvwxyz23456789';
 

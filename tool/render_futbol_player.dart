@@ -13,8 +13,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:screen_shift/core/theme/app_colors.dart';
-import 'package:screen_shift/features/matrix_futbol/presentation/futbol_player_sprite.dart';
+import 'package:bluelink_party/core/theme/app_colors.dart';
+import 'package:bluelink_party/features/matrix_futbol/presentation/futbol_player_sprite.dart';
 
 const double _canvas = 1024;
 const double _playerRadius = 170;

@@ -9,7 +9,7 @@ import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
     private companion object {
-        const val CHANNEL = "screen_shift/platform"
+        const val CHANNEL = "bluelink_party/platform"
     }
 
     private var multicastLock: WifiManager.MulticastLock? = null
@@ -39,7 +39,7 @@ class MainActivity : FlutterActivity() {
 
     private fun acquireMulticastLock(wifiManager: WifiManager) {
         if (multicastLock == null) {
-            multicastLock = wifiManager.createMulticastLock("screen_shift").apply {
+            multicastLock = wifiManager.createMulticastLock("bluelink_party").apply {
                 setReferenceCounted(false)
                 acquire()
             }

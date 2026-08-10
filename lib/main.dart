@@ -6,7 +6,7 @@ import 'app.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await _requestPermissions();
-  runApp(const ScreenShiftApp());
+  runApp(const BlueLinkPartyApp());
 }
 
 /// Location is required by Android to read the real Wi-Fi SSID (and, on

@@ -1,12 +1,12 @@
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/data/models/team.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_grid.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_snapshots.dart';
-import 'package:screen_shift/features/matrix_arena/game/matrix_sync_adapter.dart';
-import 'package:screen_shift/features/matrix_futbol/domain/futbol_ball.dart';
-import 'package:screen_shift/features/matrix_futbol/game/futbol_interpolation.dart';
-import 'package:screen_shift/features/matrix_futbol/game/futbol_match_controller.dart';
+import 'package:bluelink_party/data/models/team.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_grid.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_snapshots.dart';
+import 'package:bluelink_party/features/matrix_arena/game/matrix_sync_adapter.dart';
+import 'package:bluelink_party/features/matrix_futbol/domain/futbol_ball.dart';
+import 'package:bluelink_party/features/matrix_futbol/game/futbol_interpolation.dart';
+import 'package:bluelink_party/features/matrix_futbol/game/futbol_match_controller.dart';
 
 class _Bus implements MatrixSyncAdapter {
   FutbolMatchController? host;

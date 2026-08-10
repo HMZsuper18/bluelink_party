@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/data/models/game_mode.dart';
-import 'package:screen_shift/data/models/lobby_room.dart';
-import 'package:screen_shift/data/models/player_slot.dart';
-import 'package:screen_shift/data/models/team.dart';
-import 'package:screen_shift/network/protocol.dart';
+import 'package:bluelink_party/data/models/game_mode.dart';
+import 'package:bluelink_party/data/models/lobby_room.dart';
+import 'package:bluelink_party/data/models/player_slot.dart';
+import 'package:bluelink_party/data/models/team.dart';
+import 'package:bluelink_party/network/protocol.dart';
 
 Uint8List _bytes(String source) => Uint8List.fromList(utf8.encode(source));
 

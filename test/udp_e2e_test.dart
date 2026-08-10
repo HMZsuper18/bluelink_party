@@ -1,16 +1,16 @@
 // ignore_for_file: avoid_print
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/data/models/game_phase.dart';
-import 'package:screen_shift/data/models/match_config.dart';
-import 'package:screen_shift/data/models/match_event.dart';
-import 'package:screen_shift/data/models/team.dart';
-import 'package:screen_shift/features/game/bloc/game_bloc.dart';
-import 'package:screen_shift/features/game/bloc/game_event.dart';
-import 'package:screen_shift/features/game/sync/game_sync_adapter.dart';
-import 'package:screen_shift/network/client_service.dart';
-import 'package:screen_shift/network/host_service.dart';
-import 'package:screen_shift/data/repositories/wifi_info_repository.dart';
-import 'package:screen_shift/network/protocol.dart';
+import 'package:bluelink_party/data/models/game_phase.dart';
+import 'package:bluelink_party/data/models/match_config.dart';
+import 'package:bluelink_party/data/models/match_event.dart';
+import 'package:bluelink_party/data/models/team.dart';
+import 'package:bluelink_party/features/game/bloc/game_bloc.dart';
+import 'package:bluelink_party/features/game/bloc/game_event.dart';
+import 'package:bluelink_party/features/game/sync/game_sync_adapter.dart';
+import 'package:bluelink_party/network/client_service.dart';
+import 'package:bluelink_party/network/host_service.dart';
+import 'package:bluelink_party/data/repositories/wifi_info_repository.dart';
+import 'package:bluelink_party/network/protocol.dart';
 
 /// Stub for the Android multicast lock; loopback does not need it.
 class _FakeBridge extends PlatformBridge {

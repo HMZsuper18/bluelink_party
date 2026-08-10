@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-/// Shared constants for the ScreenShift UDP protocol.
+/// Shared constants for the BlueLink Party UDP protocol.
 abstract final class NetConstants {
   /// Well-known port the host binds to; clients may bind ephemeral ports.
   static const int hostPort = 45701;

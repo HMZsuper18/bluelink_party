@@ -1,19 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:screen_shift/data/models/game_mode.dart';
-import 'package:screen_shift/data/models/game_phase.dart';
-import 'package:screen_shift/data/models/match_config.dart';
-import 'package:screen_shift/data/models/match_event.dart';
-import 'package:screen_shift/data/models/player_slot.dart';
-import 'package:screen_shift/data/models/team.dart';
-import 'package:screen_shift/dev/lab/app_bot_lab.dart';
-import 'package:screen_shift/dev/lab/matrix_device_lab.dart'
+import 'package:bluelink_party/data/models/game_mode.dart';
+import 'package:bluelink_party/data/models/game_phase.dart';
+import 'package:bluelink_party/data/models/match_config.dart';
+import 'package:bluelink_party/data/models/match_event.dart';
+import 'package:bluelink_party/data/models/player_slot.dart';
+import 'package:bluelink_party/data/models/team.dart';
+import 'package:bluelink_party/dev/lab/app_bot_lab.dart';
+import 'package:bluelink_party/dev/lab/matrix_device_lab.dart'
     show LabPlatformBridge;
-import 'package:screen_shift/features/matrix_arena/domain/matrix_grid.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_snapshots.dart';
-import 'package:screen_shift/features/matrix_arena/game/matrix_arena_controller.dart';
-import 'package:screen_shift/features/matrix_arena/game/matrix_transport_sync.dart';
-import 'package:screen_shift/network/host_service.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_grid.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_snapshots.dart';
+import 'package:bluelink_party/features/matrix_arena/game/matrix_arena_controller.dart';
+import 'package:bluelink_party/features/matrix_arena/game/matrix_transport_sync.dart';
+import 'package:bluelink_party/network/host_service.dart';
 
 /// Loopback e2e: the bot swarm is a real lobby client like a real phone. It
 /// discovers the host, joins, claims a seat, and mirrors a Screen Shift match

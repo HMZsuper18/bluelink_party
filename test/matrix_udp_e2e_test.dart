@@ -1,16 +1,16 @@
 // ignore_for_file: avoid_print
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/data/models/game_mode.dart';
-import 'package:screen_shift/data/models/match_config.dart';
-import 'package:screen_shift/data/models/team.dart';
-import 'package:screen_shift/data/repositories/wifi_info_repository.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_grid.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_snapshots.dart';
-import 'package:screen_shift/features/matrix_arena/game/matrix_arena_controller.dart';
-import 'package:screen_shift/features/matrix_arena/game/matrix_transport_sync.dart';
-import 'package:screen_shift/network/client_service.dart';
-import 'package:screen_shift/network/host_service.dart';
-import 'package:screen_shift/network/protocol.dart';
+import 'package:bluelink_party/data/models/game_mode.dart';
+import 'package:bluelink_party/data/models/match_config.dart';
+import 'package:bluelink_party/data/models/team.dart';
+import 'package:bluelink_party/data/repositories/wifi_info_repository.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_grid.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_snapshots.dart';
+import 'package:bluelink_party/features/matrix_arena/game/matrix_arena_controller.dart';
+import 'package:bluelink_party/features/matrix_arena/game/matrix_transport_sync.dart';
+import 'package:bluelink_party/network/client_service.dart';
+import 'package:bluelink_party/network/host_service.dart';
+import 'package:bluelink_party/network/protocol.dart';
 
 class _FakeBridge extends PlatformBridge {
   @override

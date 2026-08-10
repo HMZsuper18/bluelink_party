@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:screen_shift/dev/lab/futbol_device_lab.dart';
-import 'package:screen_shift/features/matrix_futbol/game/futbol_interpolation.dart';
+import 'package:bluelink_party/dev/lab/futbol_device_lab.dart';
+import 'package:bluelink_party/features/matrix_futbol/game/futbol_interpolation.dart';
 
 void main() {
   test('memory futom lab boots 4 devices into playing', () async {

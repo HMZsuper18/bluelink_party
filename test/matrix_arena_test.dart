@@ -3,14 +3,14 @@ import 'dart:math';
 
 import 'package:flutter/painting.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_grid.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_snapshots.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_spawn.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_world.dart';
-import 'package:screen_shift/features/matrix_arena/game/matrix_arena_controller.dart';
-import 'package:screen_shift/features/matrix_arena/game/matrix_interpolation.dart';
-import 'package:screen_shift/features/matrix_arena/game/matrix_sync_adapter.dart';
-import 'package:screen_shift/features/matrix_arena/game/matrix_viewport.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_grid.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_snapshots.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_spawn.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_world.dart';
+import 'package:bluelink_party/features/matrix_arena/game/matrix_arena_controller.dart';
+import 'package:bluelink_party/features/matrix_arena/game/matrix_interpolation.dart';
+import 'package:bluelink_party/features/matrix_arena/game/matrix_sync_adapter.dart';
+import 'package:bluelink_party/features/matrix_arena/game/matrix_viewport.dart';
 
 /// Records pause/resume requests instead of sending them over the network.
 class _PauseAwareAdapter implements MatrixSyncAdapter {

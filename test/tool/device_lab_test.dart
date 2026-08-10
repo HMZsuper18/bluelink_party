@@ -19,9 +19,9 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/dev/lab/device_profile.dart';
-import 'package:screen_shift/dev/lab/matrix_device_lab.dart';
-import 'package:screen_shift/features/matrix_arena/domain/matrix_snapshots.dart';
+import 'package:bluelink_party/dev/lab/device_profile.dart';
+import 'package:bluelink_party/dev/lab/matrix_device_lab.dart';
+import 'package:bluelink_party/features/matrix_arena/domain/matrix_snapshots.dart';
 
 const _envDevices = String.fromEnvironment('LAB_DEVICES');
 const _envPlayers = String.fromEnvironment('LAB_PLAYERS');

@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:screen_shift/data/models/game_mode.dart';
-import 'package:screen_shift/data/models/lobby_room.dart';
-import 'package:screen_shift/data/models/player_slot.dart';
-import 'package:screen_shift/data/models/team.dart';
-import 'package:screen_shift/features/battle_sync/domain/battle_arena.dart';
-import 'package:screen_shift/features/battle_sync/domain/game_snapshots.dart';
-import 'package:screen_shift/features/battle_sync/domain/player_entity.dart';
-import 'package:screen_shift/features/battle_sync/game/battle_sync_controller.dart';
+import 'package:bluelink_party/data/models/game_mode.dart';
+import 'package:bluelink_party/data/models/lobby_room.dart';
+import 'package:bluelink_party/data/models/player_slot.dart';
+import 'package:bluelink_party/data/models/team.dart';
+import 'package:bluelink_party/features/battle_sync/domain/battle_arena.dart';
+import 'package:bluelink_party/features/battle_sync/domain/game_snapshots.dart';
+import 'package:bluelink_party/features/battle_sync/domain/player_entity.dart';
+import 'package:bluelink_party/features/battle_sync/game/battle_sync_controller.dart';
 
 class _RecordingAdapter implements BattleSyncAdapter {
   final inputs = <PlayerInput>[];

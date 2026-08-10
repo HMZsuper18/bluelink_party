@@ -35,13 +35,13 @@ class WifiStatus {
   }
 }
 
-/// Thin wrapper over the `screen_shift/platform` MethodChannel. Owns the
+/// Thin wrapper over the `bluelink_party/platform` MethodChannel. Owns the
 /// Wi-Fi info polling and the Android multicast lock that lets the host
 /// receive broadcast discovery packets.
 class PlatformBridge {
   PlatformBridge({MethodChannel? channel})
       : _channel = channel ??
-            const MethodChannel('screen_shift/platform');
+            const MethodChannel('bluelink_party/platform');
 
   final MethodChannel _channel;
 

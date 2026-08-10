@@ -19,7 +19,7 @@ class AppBotLabApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ScreenShift · Bots Lab',
+      title: 'BlueLink Party · Bots Lab',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
       home: const _AppBotLabHome(),

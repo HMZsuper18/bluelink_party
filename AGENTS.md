@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Guidance for AI agents working on ScreenShift.
+Guidance for AI agents working on BlueLink Party.
 
 ## What this project is
 
