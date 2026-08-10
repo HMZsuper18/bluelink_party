@@ -77,7 +77,7 @@ class _PlayerSetupScreenState extends State<PlayerSetupScreen> {
                         height: 76,
                         clipBehavior: Clip.antiAlias,
                         decoration: BoxDecoration(
-                          color: AppColors.accent.withValues(alpha: 0.14),
+                          color: AppColors.surfaceRaised,
                           borderRadius: BorderRadius.circular(22),
                           border: Border.all(color: AppColors.borderStrong),
                         ),

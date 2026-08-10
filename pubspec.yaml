@@ -66,7 +66,7 @@ flutter:
 
   assets:
     - assets/audio/
-    - assets/icon/ic_launcher.png
+    - assets/icon/ic_launcher_emblem.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:

@@ -277,7 +277,7 @@ class _LobbyViewState extends State<_LobbyView> {
           height: 42,
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            color: AppColors.accent.withValues(alpha: 0.14),
+            color: AppColors.surfaceRaised,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: AppColors.borderStrong),
           ),
